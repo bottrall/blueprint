@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Lint with oxlint (using the package's own base config) and check formatting with oxfmt; --fix fixes both.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+fix=false
+paths=()
+for arg in "$@"; do
+  case "$arg" in
+    --fix) fix=true ;;
+    *) paths+=("$arg") ;;
+  esac
+done
+
+status=0
+if [ "$fix" = true ]; then
+  pnpm exec oxlint --fix "${paths[@]}" || status=$?
+  pnpm exec oxfmt --write "${paths[@]}" || status=$?
+else
+  pnpm exec oxlint "${paths[@]}" || status=$?
+  pnpm exec oxfmt --check "${paths[@]}" || status=$?
+fi
+exit "$status"

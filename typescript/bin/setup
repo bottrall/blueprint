@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Install the package's dependencies.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+pnpm install

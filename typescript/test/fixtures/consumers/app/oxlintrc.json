@@ -1,0 +1,16 @@
+{
+  "extends": ["../../../../oxlint/app.json"],
+  "plugins": [],
+  "settings": {
+    "better-tailwindcss": { "entryPoint": "./src/styles.css" }
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.{ts,tsx}"],
+      "rules": {
+        "bottrall/no-default-export": "error",
+        "bottrall/require-colocated-test": "error"
+      }
+    }
+  ]
+}
