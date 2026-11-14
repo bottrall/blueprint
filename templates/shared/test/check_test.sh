@@ -20,6 +20,13 @@ test_check_runs_every_step_after_one_fails() {
   assert_calls 'bundle exec rake lint RUBOCOP_OPTS=-a' 'bundle exec rake typecheck' 'bundle exec rake test'
 }
 
+test_check_skips_a_step_the_repo_has_deleted() {
+  repo ruby
+  rm bin/typecheck
+  run bin/check
+  assert_calls 'bundle exec rake lint RUBOCOP_OPTS=-a' 'bundle exec rake test'
+}
+
 test_check_fails_when_a_step_fails() {
   repo ruby
   file Steepfile

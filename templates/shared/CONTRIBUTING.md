@@ -36,4 +36,4 @@ PR titles are [Conventional Commits](https://www.conventionalcommits.org/) (`fea
 
 ## Releasing
 
-Releases go through [release-please](https://github.com/googleapis/release-please). Every push to `main` updates its release PR, which bumps the version and writes the changelog section; merging that PR tags the release and publishes it. Never edit the version or `CHANGELOG.md` by hand.
+If the repo publishes releases (it has a `release-please-config.json`), they go through [release-please](https://github.com/googleapis/release-please). Every push to `main` updates its release PR, which bumps the version and writes the changelog section; merging that PR tags the release and publishes it. Never edit the version or `CHANGELOG.md` by hand.

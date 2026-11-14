@@ -11,7 +11,7 @@ echo "==> templates"
 run_template_tests || status=1
 if command -v shellcheck >/dev/null; then
   echo "==> shellcheck"
-  find bin templates/shared/bin -type f -print0 | xargs -0 shellcheck -x || status=1
+  find bin tools templates/shared/bin -type f -print0 | xargs -0 shellcheck -x || status=1
 else
   echo "==> shellcheck not installed; CI runs it"
 fi

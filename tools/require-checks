@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Adds required status checks to a repo's first ruleset (creating the rule if
+# it's missing) and sets require_extra_approval_for_unattributed_changes to
+# false explicitly. Everything else in the ruleset is sent back unchanged.
+# Usage: tools/require-checks <owner/repo> <check> [<check> ...]
+# Check names are the names CI shows on a PR (`gh pr checks <n>`).
+set -euo pipefail
+repo=$1; shift
+checks=$(printf '%s\n' "$@" | jq -R . | jq -s .)
+id=$(gh api "repos/$repo/rulesets" --jq '.[0].id')
+gh api "repos/$repo/rulesets/$id" | jq --argjson add "$checks" '
+  def with_checks:
+    if any(.[]; .type == "required_status_checks") then .
+    else . + [{type: "required_status_checks", parameters: {strict_required_status_checks_policy: false, do_not_enforce_on_create: false, required_status_checks: []}}]
+    end
+    | map(if .type == "required_status_checks" then
+        .parameters.required_status_checks as $have
+        | .parameters.required_status_checks = ($have + ($add - ($have | map(.context)) | map({context: .})))
+      else . end);
+  {name, target, enforcement, conditions, bypass_actors,
+   rules: (.rules | with_checks | map(if .type == "pull_request" then .parameters.require_extra_approval_for_unattributed_changes = false else . end))}
+' | gh api -X PUT "repos/$repo/rulesets/$id" --input - \
+  --jq '"\(.name): required = " + ([.rules[] | select(.type=="required_status_checks") | .parameters.required_status_checks[].context] | join(", ")) + " | extra approval = " + ([.rules[] | select(.type=="pull_request") | .parameters.require_extra_approval_for_unattributed_changes | tostring] | join(""))'

@@ -2,11 +2,12 @@
 
 The starting files for a new repo. Every project is [`shared/`](shared/README.md), the `bin/` scripts, workflows and repo docs every repo gets, with one stack template copied over it:
 
-| Template              | For                                                                                                                            |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| [`shared/`](shared/README.md) | Every repo: the stack-aware `bin/` scripts, `pr-title.yml` and `deps.yml`, `renovate.json`, `LICENSE`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`. Never used on its own |
-| `ruby-gem/`           | A gem published to RubyGems: Zeitwerk, Minitest, RuboCop through `rubocop-bottrall`, Steep over rbs-inline, CI on every Ruby that isn't end-of-life, and release-please publishing with RubyGems trusted publishing |
-| `ruby-app/`           | A Ruby application that isn't a gem, such as a command-line tool or a service: the same tooling, an `exe/` entry point, the Ruby in `.ruby-version` alone, and no releases. For a Skyward web app, run `skyward new` instead |
+| Template                      | For                                                                                                                                                                                                                           |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`shared/`](shared/README.md) | Every repo: the stack-aware `bin/` scripts, `pr-title.yml` and `deps.yml`, `renovate.json`, `LICENSE`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`. Never used on its own                                          |
+| `ruby-gem/`                   | A gem published to RubyGems: Zeitwerk, Minitest, RuboCop through `rubocop-bottrall`, Steep over rbs-inline, CI on every Ruby that isn't end-of-life, and release-please publishing with RubyGems trusted publishing           |
+| `ruby-app/`                   | A Ruby application that isn't a gem, such as a command-line tool or a service: the same tooling, an `exe/` entry point, the Ruby in `.ruby-version` alone, and no releases. For a Skyward web app, run `skyward new` instead  |
+| `ts-app/`                     | A Preact web app: `@preact/signals`, Tailwind v4, preact-iso and valibot on Vite; vitest with per-file coverage, Playwright against the production build, oxlint and oxfmt through `@bottrall/oxlint-config`, and no releases |
 
 ## Creating a project
 
@@ -40,13 +41,13 @@ Run it with no arguments to list the templates.
 
 Each template's `template.json` lists the placeholders it uses. The Ruby templates take:
 
-| Placeholder    | Example                     | Used for                                                       |
-| -------------- | --------------------------- | -------------------------------------------------------------- |
-| `name`         | `sample-gem`                | The repo, the gem or the app's executable                      |
-| `module`       | `SampleGem`                 | The Ruby constant everything in `lib/` lives under             |
-| `require_path` | `sample_gem`                | `lib/<require_path>.rb`, the entry point                       |
-| `description`  | `Says hello.`               | One sentence for the README, `AGENTS.md` and the gemspec summary; no single quotes, since the gemspec quotes it |
-| `year`         | `2026`                      | `LICENSE`; defaults to this year                               |
+| Placeholder    | Example       | Used for                                                                                                        |
+| -------------- | ------------- | --------------------------------------------------------------------------------------------------------------- |
+| `name`         | `sample-gem`  | The repo, the gem or the app's executable                                                                       |
+| `module`       | `SampleGem`   | The Ruby constant everything in `lib/` lives under                                                              |
+| `require_path` | `sample_gem`  | `lib/<require_path>.rb`, the entry point                                                                        |
+| `description`  | `Says hello.` | One sentence for the README, `AGENTS.md` and the gemspec summary; no single quotes, since the gemspec quotes it |
+| `year`         | `2026`        | `LICENSE`; defaults to this year                                                                                |
 
 The Ruby templates expect a `module` that is a single constant. A gem that extends another gem's namespace (`riffer-rig`, `Riffer::Rig`, `riffer/rig`) needs its entry point and `version.rb` adapted afterwards, as the comment in `lib/<require_path>.rb` explains.
 

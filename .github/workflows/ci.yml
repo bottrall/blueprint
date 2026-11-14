@@ -87,4 +87,4 @@ jobs:
           persist-credentials: false
       - run: templates/shared/test/run
       - run: if [[ -x templates/test/run ]]; then templates/test/run; fi
-      - run: find bin templates/shared/bin -type f -print0 | xargs -0 shellcheck -x
+      - run: find bin tools templates/shared/bin -type f -print0 | xargs -0 shellcheck -x
