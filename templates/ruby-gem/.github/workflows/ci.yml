@@ -1,0 +1,63 @@
+# bin/ci runs every `run: bin/...` line here, so a check added to CI runs
+# locally too.
+
+name: ci
+
+on: pull_request
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: ${{ matrix.name }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: lint
+            run: bin/lint
+          - name: typecheck
+            run: bin/typecheck
+          # Builds the gem, checks it ships every file in lib/ and sig/, then
+          # installs it into an empty GEM_HOME and loads it.
+          - name: build
+            run: bin/build
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - run: bin/setup
+      - run: ${{ matrix.run }}
+
+  test:
+    runs-on: ubuntu-latest
+    name: test ${{ matrix.ruby }}
+    # head is an early warning of the next Ruby's breakages, not a gate.
+    continue-on-error: ${{ matrix.ruby == 'head' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Every Ruby that isn't end-of-life.
+        ruby: ["3.3", "3.4", "4.0", head]
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - run: bin/test

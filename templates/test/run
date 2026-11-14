@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Tests templates/instantiate: fixture templates under $TMPDIR, and every real template in this repo.
+#
+# Usage: templates/test/run [minitest flags], e.g. -n /leftovers/
+set -euo pipefail
+cd "$(dirname "$0")"
+
+exec ruby instantiate_test.rb "$@"

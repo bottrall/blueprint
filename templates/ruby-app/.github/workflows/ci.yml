@@ -1,0 +1,41 @@
+# bin/ci runs every `run: bin/...` line here, so a check added to CI runs
+# locally too.
+
+name: ci
+
+on: pull_request
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: ${{ matrix.name }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: lint
+            run: bin/lint
+          - name: typecheck
+            run: bin/typecheck
+          - name: test
+            run: bin/test
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      # The app runs on the Ruby in .ruby-version alone, which the Gemfile
+      # requires.
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - run: bin/setup
+      - run: ${{ matrix.run }}

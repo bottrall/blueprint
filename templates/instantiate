@@ -1,0 +1,209 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Creates a project from a template: templates/shared/, then the stack template
+# copied over it, its placeholders substituted and its AGENTS.md includes
+# expanded. Needs only Ruby's standard library.
+#
+# Usage: templates/instantiate <template> <target-dir> key=value...
+
+require 'fileutils'
+require 'json'
+
+module Instantiate
+  extend self
+
+  SHARED = 'shared'
+  PLACEHOLDER = /\{\{(\w+)\}\}/
+  INCLUDE = %r{^[ \t]*\{\{>[ \t]*(agents/[\w.-]+\.md)[ \t]*\}\}[ \t]*$}
+  # A placeholder or an include still there once rendering is done. Other
+  # double braces are the files' own: GitHub Actions expressions (`${{ ... }}`)
+  # and JSX object literals (`style={{ color: 'red' }}`).
+  LEFTOVER = /(?<!\$)\{\{(?:\w+|>[^{}\n]*)\}\}/
+  # The files whose `bin/` tables list every shared script, one row each.
+  BIN_TABLES = %w[CONTRIBUTING.md AGENTS.md].freeze
+  DEFAULTS = { 'year' => Time.now.year.to_s }.freeze
+
+  def main(argv, root:, out:, err:)
+    return usage(root, out) if argv.empty? || %w[-h --help].include?(argv.first)
+    return fail_with(err, 2, ["takes <template> <target-dir> key=value...\n\n#{usage_text(root)}"]) if argv.size < 2
+
+    template, target, *pairs = argv
+    problems = template_problems(root, template) + target_problems(target)
+    return fail_with(err, 2, problems) unless problems.empty?
+
+    layers = [SHARED, template].map { |name| load_layer(root, name) }
+    values, value_problems = parse_values(pairs, declared_placeholders(layers))
+    return fail_with(err, 2, value_problems) unless value_problems.empty?
+
+    project = build(root, layers, values)
+    return fail_with(err, 1, project[:problems]) unless project[:problems].empty?
+
+    write(target, project)
+    out.puts "Created #{target} from templates/#{template} (#{project[:files].size} files)."
+    out.puts "Next: cd #{target} && git init && bin/setup"
+    0
+  end
+
+  def usage(root, out)
+    out.puts usage_text(root)
+    0
+  end
+
+  def usage_text(root)
+    <<~TEXT
+      Usage: templates/instantiate <template> <target-dir> key=value...
+
+      Templates: #{stack_templates(root).join(', ')}
+      Each template's template.json lists the placeholders it needs; year defaults to this year.
+    TEXT
+  end
+
+  def fail_with(err, status, problems)
+    problems.each { |problem| err.puts "templates/instantiate: #{problem}" }
+    status
+  end
+
+  def stack_templates(root)
+    Dir.glob('*/template.json', base: File.join(root, 'templates'))
+       .map { |path| File.dirname(path) }
+       .reject { |name| name == SHARED }
+       .sort
+  end
+
+  def template_problems(root, template)
+    return [] if stack_templates(root).include?(template)
+
+    ["no template '#{template}'; pick one of #{stack_templates(root).join(', ')}"]
+  end
+
+  def target_problems(target)
+    return [] unless File.exist?(target)
+    return ["#{target} exists and isn't a directory"] unless File.directory?(target)
+    return [] if Dir.empty?(target)
+
+    ["#{target} isn't empty; pick a new or empty directory"]
+  end
+
+  def load_layer(root, name)
+    dir = File.join(root, 'templates', name)
+    config = JSON.parse(File.read(File.join(dir, 'template.json')))
+    {
+      name: name,
+      dir: dir,
+      placeholders: config.fetch('placeholders', {}).keys,
+      executable: config.fetch('executable', []),
+      exclude: config.fetch('exclude', []),
+      remove: config.fetch('remove', [])
+    }
+  end
+
+  def declared_placeholders(layers)
+    layers.flat_map { |layer| layer[:placeholders] }.uniq
+  end
+
+  def parse_values(pairs, declared)
+    pair = /\A\w+=/
+    given = pairs.grep(pair).to_h { |argument| argument.split('=', 2) }
+    values = DEFAULTS.slice(*declared).merge(given)
+    takes = "it takes #{declared.join(', ')}"
+    problems = [
+      *pairs.grep_v(pair).map { |argument| "#{argument} isn't key=value" },
+      *(given.keys - declared).map { |key| "#{key} isn't a placeholder of this template; #{takes}" },
+      *(declared - values.keys).map { |key| "missing #{key}=..." }
+    ]
+    [values, problems]
+  end
+
+  def build(root, layers, values)
+    shared, stack = layers
+    copied = files_in(shared).merge(files_in(stack))
+    sources = copied.reject { |path, _| covered?(path, stack[:remove]) }
+    removed_bins = stack[:remove].select { |path| path.start_with?('bin/') }
+    files = sources.to_h do |path, source|
+      [substitute(path, values), render(root, path, File.binread(source), values, removed_bins)]
+    end
+    executables = (shared[:executable] + stack[:executable]).map { |path| substitute(path, values) }.uniq
+
+    {
+      files: files,
+      executables: executables.select { |path| files.key?(path) },
+      problems: [
+        *unmatched_removals(stack, copied),
+        *missing_executables(executables, files, stack[:remove]),
+        *leftovers(files)
+      ]
+    }
+  end
+
+  def files_in(layer)
+    Dir.glob('**/*', File::FNM_DOTMATCH, base: layer[:dir])
+       .reject { |path| File.directory?(File.join(layer[:dir], path)) }
+       .reject { |path| covered?(path, layer[:exclude]) }
+       .sort
+       .to_h { |path| [path, File.join(layer[:dir], path)] }
+  end
+
+  def covered?(path, entries)
+    entries.any? { |entry| path == entry || path.start_with?("#{entry.chomp('/')}/") }
+  end
+
+  def substitute(text, values)
+    text.gsub(PLACEHOLDER) { values.fetch(Regexp.last_match(1), Regexp.last_match(0)) }
+  end
+
+  # Includes are expanded after substitution, so an included file's text is
+  # never treated as a placeholder.
+  def render(root, path, bytes, values, removed_bins)
+    text = bytes.dup.force_encoding(Encoding::UTF_8)
+    return bytes unless text.valid_encoding?
+
+    expanded = expand_includes(root, substitute(text, values))
+    BIN_TABLES.include?(path) ? drop_bin_rows(expanded, removed_bins) : expanded
+  end
+
+  def expand_includes(root, text)
+    text.gsub(INCLUDE) do
+      include_path = File.join(root, Regexp.last_match(1))
+      File.file?(include_path) ? File.read(include_path).chomp : Regexp.last_match(0)
+    end
+  end
+
+  def drop_bin_rows(text, scripts)
+    return text if scripts.empty?
+
+    row = /\A\|\s*`(?:#{scripts.map { |script| Regexp.escape(script) }.join('|')})[\s`]/
+    text.lines.grep_v(row).join
+  end
+
+  def unmatched_removals(stack, copied)
+    stack[:remove]
+      .reject { |entry| copied.keys.any? { |path| covered?(path, [entry]) } }
+      .map { |entry| "templates/#{stack[:name]}/template.json removes #{entry}, which no layer has" }
+  end
+
+  def missing_executables(executables, files, removed)
+    executables
+      .reject { |path| files.key?(path) || covered?(path, removed) }
+      .map { |path| "#{path} is listed as executable, but no layer has it" }
+  end
+
+  def leftovers(files)
+    files.flat_map do |path, content|
+      in_path = path.scan(LEFTOVER).map { |match| "path #{path} still holds #{match}" }
+      in_content = content.encoding == Encoding::UTF_8 ? content.scan(LEFTOVER).uniq : []
+      in_path + in_content.map { |match| "#{path} still holds #{match} after substitution" }
+    end
+  end
+
+  def write(target, project)
+    project[:files].each do |path, content|
+      destination = File.join(target, path)
+      FileUtils.mkdir_p(File.dirname(destination))
+      File.binwrite(destination, content)
+    end
+    project[:executables].each { |path| File.chmod(0o755, File.join(target, path)) }
+  end
+end
+
+exit Instantiate.main(ARGV, root: File.expand_path('..', __dir__), out: $stdout, err: $stderr)

@@ -1,0 +1,15 @@
+plugins:
+  - rubocop-bottrall
+
+inherit_gem:
+  rubocop-bottrall:
+    - config/base.yml
+    - config/rbs-inline.yml
+
+inherit_mode:
+  merge:
+    - Exclude
+
+Bottrall/NoMocking:
+  OwnedNamespaces:
+    - {{module}}
