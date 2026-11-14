@@ -29,6 +29,42 @@ jobs:
       - uses: googleapis/release-please-action@v5
         id: release
 
+  # release-please bumps the gem's version.rb and its entry in Gemfile.lock, but
+  # not the lockfile's CHECKSUMS section, and CI installs the bundle in frozen
+  # mode, so the gem's release PR needs `bundle lock` run on it to pass.
+  lockfile:
+    needs: release-please
+    if: needs.release-please.outputs.gem != 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      BRANCH: release-please--branches--main--components--rubocop-bottrall
+    steps:
+      - id: branch
+        run: |
+          if git ls-remote --exit-code --heads "https://github.com/${GITHUB_REPOSITORY}.git" "$BRANCH" >/dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v7
+        if: steps.branch.outputs.exists == 'true'
+        with:
+          ref: ${{ env.BRANCH }}
+      - uses: ruby/setup-ruby@v1
+        if: steps.branch.outputs.exists == 'true'
+        with:
+          working-directory: ruby
+      - if: steps.branch.outputs.exists == 'true'
+        working-directory: ruby
+        run: bundle lock
+      - if: steps.branch.outputs.exists == 'true'
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore: update Gemfile.lock to the new version"
+          git push
+
   # The publish jobs can mint registry credentials, so they run none of the
   # packages' dev dependencies: the checks that need them run here, unprivileged.
   verify-gem:
