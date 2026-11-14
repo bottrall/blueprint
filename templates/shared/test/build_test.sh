@@ -29,6 +29,23 @@ test_build_ts_runs_vite_build() {
   assert_calls 'pnpm exec vite build'
 }
 
+test_build_ts_builds_each_named_vite_config() {
+  repo ts
+  file vite.web.config.ts
+  file vite.world.config.ts
+  run bin/build
+  assert_calls 'pnpm exec vite build --config vite.web.config.ts' 'pnpm exec vite build --config vite.world.config.ts'
+}
+
+test_build_ts_stops_at_the_first_named_config_that_fails() {
+  repo ts
+  file vite.web.config.ts
+  file vite.world.config.ts
+  fails 'pnpm exec vite build --config vite.web.config.ts'
+  run bin/build
+  assert_calls 'pnpm exec vite build --config vite.web.config.ts'
+}
+
 test_build_ts_without_a_vite_config_succeeds() {
   repo ts
   run bin/build

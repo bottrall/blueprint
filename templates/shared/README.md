@@ -52,19 +52,19 @@ The files every new repo gets, whatever its stack: the `bin/` scripts, the workf
 
 ### What each script runs
 
-| Script                        | Ruby (a `Gemfile`)                                              | TS (a `package.json`)                                                                            |
-| ----------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `bin/setup`                   | `bundle install`, then `bundle exec rake setup`                 | `pnpm install`                                                                                   |
-| `bin/dev`                     | `bundle exec rake dev`                                          | `pnpm exec mprocs` with an `mprocs.yaml`, else `pnpm exec vite`                                  |
-| `bin/test [paths]`            | `bundle exec rake test`, with `TEST` and `TESTOPTS`             | `pnpm exec vitest run --coverage`; `vitest run` for some files; `vitest watch` with `--watch`    |
-| `bin/e2e [paths]`             | —                                                               | `pnpm exec playwright test --config e2e/playwright.config.ts`                                    |
-| `bin/lint [--fix] [paths]`    | `bundle exec rake lint`, with `RUBOCOP_OPTS` (`-a` for `--fix`) | `pnpm exec oxlint` and `pnpm exec oxfmt --check`; `oxlint --fix` and `oxfmt --write` for `--fix` |
-| `bin/typecheck`               | `bundle exec rake typecheck`, with `STEEP_OPTS`                 | `pnpm exec tsc --noEmit`                                                                         |
-| `bin/generate [--watch]`      | `bundle exec rake generate`; `generate:watch` with `--watch`    | —                                                                                                |
-| `bin/build`                   | `bundle exec rake build`                                        | `pnpm exec vite build`                                                                           |
-| `bin/docs [--serve\|--check]` | `bundle exec rake docs`; `docs:serve` or `docs:check`           | —                                                                                                |
-| `bin/check`                   | `bin/lint --fix`, then `bin/typecheck`, then `bin/test`         | the same                                                                                         |
-| `bin/ci`                      | each `bin/` script `.github/workflows/ci.yml` runs              | the same                                                                                         |
+| Script                        | Ruby (a `Gemfile`)                                              | TS (a `package.json`)                                                                                        |
+| ----------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `bin/setup`                   | `bundle install`, then `bundle exec rake setup`                 | `pnpm install`                                                                                               |
+| `bin/dev`                     | `bundle exec rake dev`                                          | `pnpm exec mprocs` with an `mprocs.yaml`, else `pnpm exec vite`                                              |
+| `bin/test [paths]`            | `bundle exec rake test`, with `TEST` and `TESTOPTS`             | `pnpm exec vitest run --coverage`; `vitest run` for some files; `vitest watch` with `--watch`                |
+| `bin/e2e [paths]`             | —                                                               | `pnpm exec playwright test --config e2e/playwright.config.ts`                                                |
+| `bin/lint [--fix] [paths]`    | `bundle exec rake lint`, with `RUBOCOP_OPTS` (`-a` for `--fix`) | `pnpm exec oxlint` and `pnpm exec oxfmt --check`; `oxlint --fix` and `oxfmt --write` for `--fix`             |
+| `bin/typecheck`               | `bundle exec rake typecheck`, with `STEEP_OPTS`                 | `pnpm exec tsc --noEmit`                                                                                     |
+| `bin/generate [--watch]`      | `bundle exec rake generate`; `generate:watch` with `--watch`    | —                                                                                                            |
+| `bin/build`                   | `bundle exec rake build`                                        | `pnpm exec vite build`, or `vite build --config` each `vite.<name>.config.*` when there's no `vite.config.*` |
+| `bin/docs [--serve\|--check]` | `bundle exec rake docs`; `docs:serve` or `docs:check`           | —                                                                                                            |
+| `bin/check`                   | `bin/lint --fix`, then `bin/typecheck`, then `bin/test`         | the same                                                                                                     |
+| `bin/ci`                      | each `bin/` script `.github/workflows/ci.yml` runs              | the same                                                                                                     |
 
 The Ruby side always goes through Rake, so a repo's `Rakefile` defines what each task does: `test` honours `TEST` (comma-separated files or globs) and `TESTOPTS`, `lint` runs RuboCop and honours `RUBOCOP_OPTS`, `typecheck` runs Steep and honours `STEEP_OPTS`.
 
@@ -109,15 +109,15 @@ Where the flags go:
 
 A script that has nothing to do in a repo says so on one line and exits 0, so a template can ship every script and `bin/ci` can run a script in any repo it's listed for:
 
-| Script          | Does nothing when                                                                |
-| --------------- | -------------------------------------------------------------------------------- |
-| any             | there's neither a `Gemfile` nor a `package.json`                                 |
-| `bin/typecheck` | skips Ruby with no `Steepfile`, and TS with no `tsconfig.json` (a plain-JS repo) |
-| `bin/build`     | skips Ruby with no `rake build` task, and TS with no `vite.config.*`             |
-| `bin/e2e`       | there's no `e2e/playwright.config.ts`                                            |
-| `bin/dev`       | there's no `mprocs.yaml`, no `rake dev` task and no `vite.config.*`              |
-| `bin/generate`  | there's no `Gemfile`, or no `rake generate` (`generate:watch`) task              |
-| `bin/docs`      | there's no `Gemfile`, or no `rake docs` (`docs:serve`, `docs:check`) task        |
+| Script          | Does nothing when                                                                              |
+| --------------- | ---------------------------------------------------------------------------------------------- |
+| any             | there's neither a `Gemfile` nor a `package.json`                                               |
+| `bin/typecheck` | skips Ruby with no `Steepfile`, and TS with no `tsconfig.json` (a plain-JS repo)               |
+| `bin/build`     | skips Ruby with no `rake build` task, and TS with no `vite.config.*` or `vite.<name>.config.*` |
+| `bin/e2e`       | there's no `e2e/playwright.config.ts`                                                          |
+| `bin/dev`       | there's no `mprocs.yaml`, no `rake dev` task and no `vite.config.*`                            |
+| `bin/generate`  | there's no `Gemfile`, or no `rake generate` (`generate:watch`) task                            |
+| `bin/docs`      | there's no `Gemfile`, or no `rake docs` (`docs:serve`, `docs:check`) task                      |
 
 Rake tasks are found with `bundle exec rake -P`, which lists every task, described or not. The scripts a stack can't run are still better removed from a repo that never needs them (through the stack template's `remove`), so its `bin/` lists only what applies.
 
