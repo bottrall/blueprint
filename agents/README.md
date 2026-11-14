@@ -2,13 +2,13 @@
 
 Each file here is one section of a project's `AGENTS.md`, written once so every repo states the rule the same way. Each starts with its own `## Heading`, so it drops into an `AGENTS.md` as a whole section.
 
-| File             | Section                                                         | For                       |
-| ---------------- | --------------------------------------------------------------- | ------------------------- |
-| `commands.md`    | `## Commands`: everything runs through `bin/`, and the `bin/` table | every repo                |
-| `code-style.md`  | `## Code style`, with `### Dependency injection`                 | every repo                |
-| `testing.md`     | `## Testing`                                                    | every repo                |
-| `ruby-typing.md` | `## Ruby typing`: Steep, rbs-inline and `sig/`                  | repos with Ruby           |
-| `comments.md`    | `## Comments and documentation`                                 | every repo                |
+| File             | Section                                                             | For             |
+| ---------------- | ------------------------------------------------------------------- | --------------- |
+| `commands.md`    | `## Commands`: everything runs through `bin/`, and the `bin/` table | every repo      |
+| `code-style.md`  | `## Code style`, with `### Dependency injection`                    | every repo      |
+| `testing.md`     | `## Testing`                                                        | every repo      |
+| `ruby-typing.md` | `## Ruby typing`: Steep, rbs-inline and `sig/`                      | repos with Ruby |
+| `comments.md`    | `## Comments and documentation`                                     | every repo      |
 
 ## Including a section
 
@@ -34,6 +34,7 @@ A template's `AGENTS.md` assembles them in this order, so every repo's file read
 {{> agents/commands.md}}
 
 ## Layout
+
 <!-- the template's own sections: layout, workflow, release notes, stack rules -->
 
 {{> agents/code-style.md}}

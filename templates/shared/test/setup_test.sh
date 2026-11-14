@@ -20,6 +20,14 @@ test_setup_ts_installs_packages() {
   assert_calls 'pnpm install'
 }
 
+test_setup_ts_installs_the_playwright_browser_when_there_are_e2e_tests() {
+  repo ts
+  mkdir -p e2e
+  touch e2e/playwright.config.ts
+  run bin/setup
+  assert_calls 'pnpm install' 'pnpm exec playwright install chromium'
+}
+
 test_setup_mixed_runs_ruby_then_ts() {
   repo mixed
   run bin/setup
