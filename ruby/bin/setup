@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Install the gem's dependencies.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+bundle install
+bundle exec rake setup

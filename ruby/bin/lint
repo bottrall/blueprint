@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Lint with RuboCop; --fix autocorrects safe offenses, other arguments go to RuboCop.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+opts=()
+for arg in "$@"; do
+  if [ "$arg" = --fix ]; then
+    opts+=(-a)
+  else
+    opts+=("$arg")
+  fi
+done
+
+exec bundle exec rake lint RUBOCOP_OPTS="${opts[*]}"

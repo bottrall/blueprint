@@ -1,0 +1,7 @@
+# For projects that write rbs-inline annotations (`#: Type`, `# @rbs ...`).
+
+Layout/LeadingCommentSpace:
+  AllowRBSInlineAnnotation: true
+
+Layout/LineLength:
+  AllowRBSInlineAnnotation: true

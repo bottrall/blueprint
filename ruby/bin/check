@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Fix what lint can, then run the tests (this gem has no typecheck yet).
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+bin/lint --fix
+bin/test

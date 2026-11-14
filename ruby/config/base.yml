@@ -1,0 +1,60 @@
+# The shared Ruby style. A project inherits it with
+#
+#   plugins:
+#     - rubocop-bottrall
+#   inherit_gem:
+#     rubocop-bottrall:
+#       - config/base.yml
+#   inherit_mode:
+#     merge:
+#       - Exclude
+
+plugins:
+  - rubocop-minitest
+  - rubocop-performance
+  - rubocop-rake
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - 'bin/**/*'
+    - 'vendor/**/*'
+    - '**/sig/**/*'
+    - 'pkg/**/*'
+    - 'tmp/**/*'
+    - '.claude/**/*'
+    - 'node_modules/**/*'
+
+Layout/FirstMethodArgumentLineBreak:
+  Enabled: true
+
+Layout/FirstMethodParameterLineBreak:
+  Enabled: true
+
+Layout/MultilineMethodArgumentLineBreaks:
+  Enabled: true
+
+Layout/MultilineMethodParameterLineBreaks:
+  Enabled: true
+
+Layout/RedundantLineBreak:
+  Enabled: true
+  InspectBlocks: false
+
+Metrics:
+  Enabled: false
+
+Metrics/BlockNesting:
+  Enabled: true
+
+Minitest/MultipleAssertions:
+  Max: 1
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
+
+Style/Documentation:
+  Enabled: false
+
+Style/ModuleFunction:
+  EnforcedStyle: extend_self
