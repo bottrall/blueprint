@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Run exactly what CI runs, fixing nothing: lint, test, then build.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+bin/lint
+bin/test
+bin/build

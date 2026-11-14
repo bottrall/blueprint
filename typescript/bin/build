@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Pack the package into a temp dir and check the tarball holds exactly the files consumers need.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+out="$(mktemp -d)"
+trap 'rm -rf "$out"' EXIT
+
+pnpm pack --pack-destination "$out" >/dev/null
+tarballs=("$out"/*.tgz)
+
+expected="$(
+  {
+    printf '%s\n' package.json README.md LICENSE
+    find plugin oxlint tsconfig -type f
+  } | sort
+)"
+actual="$(tar -tzf "${tarballs[0]}" | sed 's#^package/##' | sort)"
+
+if [ "$expected" != "$actual" ]; then
+  echo "The tarball's contents differ from the expected files (< expected, > packed):" >&2
+  diff <(echo "$expected") <(echo "$actual") >&2 || true
+  exit 1
+fi
+
+missing="$(
+  node -e '
+    const files = new Set(process.argv[1].split("\n"));
+    const { exports } = JSON.parse(require("node:fs").readFileSync("package.json", "utf8"));
+    const targets = Object.values(exports).map((target) => target.replace(/^\.\//u, ""));
+    console.log(targets.filter((target) => !files.has(target)).join("\n"));
+  ' "$actual"
+)"
+if [ -n "$missing" ]; then
+  echo "package.json exports files the tarball lacks:" >&2
+  echo "$missing" >&2
+  exit 1
+fi
+
+echo "Packed $(basename "${tarballs[0]}") with $(echo "$actual" | wc -l) files."

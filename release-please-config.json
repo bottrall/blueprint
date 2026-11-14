@@ -1,0 +1,23 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": false,
+  "separate-pull-requests": true,
+  "packages": {
+    "ruby": {
+      "release-type": "ruby",
+      "package-name": "rubocop-bottrall",
+      "component": "rubocop-bottrall",
+      "version-file": "lib/rubocop/bottrall/version.rb",
+      "include-component-in-tag": true,
+      "initial-version": "0.1.0"
+    },
+    "typescript": {
+      "release-type": "node",
+      "package-name": "@bottrall/oxlint-config",
+      "component": "oxlint-config",
+      "include-component-in-tag": true,
+      "initial-version": "0.1.0"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "../node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn"],
+  "jsPlugins": ["../plugin/index.js"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "pedantic": "error",
+    "perf": "error",
+    "style": "error"
+  },
+  "options": {
+    "reportUnusedDisableDirectives": "error"
+  },
+  "rules": {
+    "curly": "error",
+    "func-style": ["error", "declaration"],
+    "max-lines-per-function": "off",
+    "max-lines": "off",
+    "max-statements": "off",
+    "max-depth": ["error", 3],
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "no-magic-numbers": ["error", { "ignore": [-1, 0, 1] }],
+    "no-param-reassign": ["error", { "props": true }],
+    "no-ternary": "off",
+    "no-void": "error",
+    "one-var": ["error", "never"],
+    "sort-imports": "off",
+    "sort-keys": "off",
+    "sort-vars": "off",
+
+    "bottrall/no-explicit-return-types": "error",
+    "bottrall/no-inheritance": "error",
+    "bottrall/no-screaming-case": "error",
+    "bottrall/no-type-casts": "error",
+    "bottrall/require-disable-description": "error",
+
+    "typescript/no-explicit-any": "error",
+
+    "typescript/ban-ts-comment": [
+      "error",
+      {
+        "ts-expect-error": "allow-with-description",
+        "ts-ignore": true,
+        "ts-nocheck": true,
+        "ts-check": false,
+        "minimumDescriptionLength": 10
+      }
+    ],
+
+    "unicorn/max-nested-calls": "off",
+    "unicorn/no-null": "off"
+  }
+}

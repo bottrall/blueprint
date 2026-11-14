@@ -1,0 +1,65 @@
+{
+  "name": "@bottrall/oxlint-config",
+  "version": "0.0.0",
+  "description": "Shared oxlint configs, custom oxlint rules and tsconfig for bottrall's JavaScript and TypeScript projects.",
+  "keywords": [
+    "oxlint",
+    "oxlint-config",
+    "oxlint-plugin",
+    "preact",
+    "tailwindcss"
+  ],
+  "homepage": "https://github.com/bottrall/blueprint/tree/main/typescript#readme",
+  "bugs": "https://github.com/bottrall/blueprint/issues",
+  "license": "MIT",
+  "author": "Jake Bottrall",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bottrall/blueprint.git",
+    "directory": "typescript"
+  },
+  "files": [
+    "plugin/",
+    "oxlint/",
+    "tsconfig/"
+  ],
+  "type": "module",
+  "exports": {
+    "./plugin": "./plugin/index.js",
+    "./oxlint/base.json": "./oxlint/base.json",
+    "./oxlint/app.json": "./oxlint/app.json",
+    "./tsconfig/app.json": "./tsconfig/app.json",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "devDependencies": {
+    "eslint-plugin-better-tailwindcss": "^4.11.0",
+    "eslint-plugin-jest-dom": "^5.10.2",
+    "eslint-plugin-testing-library": "^7.16.2",
+    "oxfmt": "^0.78.0",
+    "oxlint": "^1.93.0",
+    "tailwindcss": "^4.3.5"
+  },
+  "peerDependencies": {
+    "eslint-plugin-better-tailwindcss": "^4.11.0",
+    "eslint-plugin-jest-dom": "^5.10.2",
+    "eslint-plugin-testing-library": "^7.16.2",
+    "oxfmt": "~0.78.0",
+    "oxlint": "^1.93.0"
+  },
+  "peerDependenciesMeta": {
+    "eslint-plugin-better-tailwindcss": {
+      "optional": true
+    },
+    "eslint-plugin-jest-dom": {
+      "optional": true
+    },
+    "eslint-plugin-testing-library": {
+      "optional": true
+    }
+  },
+  "packageManager": "pnpm@12.18.0"
+}

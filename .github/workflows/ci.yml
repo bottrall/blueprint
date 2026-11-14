@@ -1,0 +1,90 @@
+name: ci
+
+on: pull_request
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # rubocop-bottrall: lint and build on .ruby-version; tests on every Ruby the
+  # gem supports.
+  ruby:
+    name: rubocop-bottrall ${{ matrix.check }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [lint, build]
+    defaults:
+      run:
+        working-directory: ruby
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@v1
+        with:
+          working-directory: ruby
+          bundler-cache: true
+      - run: bin/${{ matrix.check }}
+
+  ruby-test:
+    name: rubocop-bottrall test (ruby ${{ matrix.ruby }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.3", "3.4", "4.0"]
+    defaults:
+      run:
+        working-directory: ruby
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@v1
+        with:
+          working-directory: ruby
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - run: bin/test
+
+  typescript:
+    name: oxlint-config ${{ matrix.check }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [lint, test, build]
+    defaults:
+      run:
+        working-directory: typescript
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: typescript/package.json
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: typescript/.nvmrc
+          cache: pnpm
+          cache-dependency-path: typescript/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: bin/${{ matrix.check }}
+
+  templates:
+    name: templates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - run: templates/shared/test/run
+      - run: if [[ -x templates/test/run ]]; then templates/test/run; fi
+      - run: find bin templates/shared/bin -type f -print0 | xargs -0 shellcheck -x

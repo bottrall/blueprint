@@ -243,7 +243,7 @@ test_test_without_a_stack_succeeds() {
 test_test_runs_from_any_directory() {
   repo ruby
   mkdir -p lib
-  cd lib
+  cd lib || exit 1
   run ../bin/test
   assert_calls 'bundle exec rake test'
 }

@@ -24,7 +24,7 @@ for file in "$HERE"/*_test.sh; do
     set +e
     output=$(
       set -e
-      TEST_NAME=$name
+      export TEST_NAME=$name
       "$name"
     )
     code=$?
@@ -48,7 +48,7 @@ echo "$passed passed, ${#failures[@]} failed"
 
 lint_status=0
 if command -v shellcheck >/dev/null; then
-  shellcheck -x "$BIN"/* "$BIN"/lib/*.sh "$HERE"/run "$HERE"/*.sh "$HERE"/stub || lint_status=$?
+  find "$BIN" -type f -print0 | xargs -0 shellcheck -x "$HERE"/run "$HERE"/*.sh "$HERE"/stub || lint_status=$?
   if ((lint_status == 0)); then echo "shellcheck: clean"; fi
 else
   echo "shellcheck: not installed, skipped"

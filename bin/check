@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Fixes lint, then tests, in both packages: run it before calling a change done.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+# shellcheck source=lib/each.sh
+source bin/lib/each.sh
+run_each check "$@"

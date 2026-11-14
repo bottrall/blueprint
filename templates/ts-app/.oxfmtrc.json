@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": ["node_modules/**", "dist/**", "coverage/**", "pnpm-lock.yaml"],
+  "sortImports": { "sortSideEffects": true },
+  "sortTailwindcss": {
+    "stylesheet": "./src/styles.css",
+    "functions": ["cx"],
+    "preserveWhitespace": true
+  }
+}

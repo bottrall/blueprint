@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Run the rule and config tests with node --test (pass paths to run only those files).
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+if [ "$#" -eq 0 ]; then
+  set -- "test/*.test.js" "test/rules/*.test.js"
+fi
+
+node --test "$@"
