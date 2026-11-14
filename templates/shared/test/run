@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Tests the bin/ scripts in throwaway Ruby, TS and mixed repos, then shellchecks them.
+#
+# Usage: test/run [name-filter]. Fixtures go in a temporary directory under
+# $TMPDIR (default /tmp), removed when the run ends.
+set -euo pipefail
+
+HERE=$(cd "$(dirname "$0")" && pwd)
+BIN=$(cd "$HERE/../bin" && pwd)
+WORK=$(mktemp -d "${TMPDIR:-/tmp}/blueprint-bin-test.XXXXXX")
+trap 'rm -rf "$WORK"' EXIT
+FILTER=${1:-}
+
+# shellcheck source=helpers.sh
+source "$HERE/helpers.sh"
+
+passed=0
+failures=()
+for file in "$HERE"/*_test.sh; do
+  # shellcheck source=/dev/null
+  source "$file"
+  while IFS= read -r name; do
+    if [[ -n $FILTER && $name != *"$FILTER"* ]]; then continue; fi
+    set +e
+    output=$(
+      set -e
+      TEST_NAME=$name
+      "$name"
+    )
+    code=$?
+    set -e
+    if ((code == 0)); then
+      passed=$((passed + 1))
+      printf .
+    else
+      failures+=("$(basename "$file") $name"$'\n'"$output")
+      printf F
+    fi
+  done < <(grep -oE '^test_[a-z0-9_]+' "$file")
+done
+echo
+
+for failure in ${failures[@]+"${failures[@]}"}; do
+  printf '\nFAIL %s\n' "$failure"
+done
+echo
+echo "$passed passed, ${#failures[@]} failed"
+
+lint_status=0
+if command -v shellcheck >/dev/null; then
+  shellcheck -x "$BIN"/* "$BIN"/lib/*.sh "$HERE"/run "$HERE"/*.sh "$HERE"/stub || lint_status=$?
+  if ((lint_status == 0)); then echo "shellcheck: clean"; fi
+else
+  echo "shellcheck: not installed, skipped"
+fi
+
+if ((${#failures[@]} || lint_status)); then exit 1; fi
