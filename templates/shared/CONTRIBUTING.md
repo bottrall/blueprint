@@ -14,19 +14,19 @@ bin/setup
 
 Everything runs through `bin/`, never a tool directly.
 
-| Script                       | Does                                                                                   |
-| ---------------------------- | -------------------------------------------------------------------------------------- |
-| `bin/setup`                  | installs dependencies on a fresh checkout                                              |
-| `bin/dev`                    | runs the app locally                                                                   |
-| `bin/test [paths]`           | runs the tests; pass files to run only those                                           |
-| `bin/e2e [paths]`            | runs the end-to-end tests against a production build                                   |
-| `bin/lint [--fix] [paths]`   | checks lint and formatting; `--fix` fixes what it can                                  |
-| `bin/typecheck`              | type-checks the code                                                                   |
-| `bin/generate [--watch]`     | regenerates the generated files; `--watch` keeps them current                          |
-| `bin/build`                  | builds what the repo ships                                                             |
-| `bin/docs [--serve\|--check]` | builds the docs; `--serve` serves them, `--check` checks them                          |
-| `bin/check`                  | `bin/lint --fix`, then `bin/typecheck`, then `bin/test`: run it before calling a change done |
-| `bin/ci`                     | runs exactly what CI runs, without fixing anything: run it before you push             |
+| Script                        | Does                                                                                         |
+| ----------------------------- | -------------------------------------------------------------------------------------------- |
+| `bin/setup`                   | installs dependencies on a fresh checkout                                                    |
+| `bin/dev`                     | runs the app locally                                                                         |
+| `bin/test [paths]`            | runs the tests; pass files to run only those                                                 |
+| `bin/e2e [paths]`             | runs the end-to-end tests against a production build                                         |
+| `bin/lint [--fix] [paths]`    | checks lint and formatting; `--fix` fixes what it can                                        |
+| `bin/typecheck`               | type-checks the code                                                                         |
+| `bin/generate [--watch]`      | regenerates the generated files; `--watch` keeps them current                                |
+| `bin/build`                   | builds what the repo ships                                                                   |
+| `bin/docs [--serve\|--check]` | builds the docs; `--serve` serves them, `--check` checks them                                |
+| `bin/check`                   | `bin/lint --fix`, then `bin/typecheck`, then `bin/test`: run it before calling a change done |
+| `bin/ci`                      | runs exactly what CI runs, without fixing anything: run it before you push                   |
 
 In a repo with both Ruby and TypeScript, each script runs the Ruby side then the TypeScript side; `--only=ruby` or `--only=ts` picks one.
 
