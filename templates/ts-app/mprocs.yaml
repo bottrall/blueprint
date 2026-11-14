@@ -1,0 +1,3 @@
+procs:
+  vite:
+    shell: pnpm exec vite
