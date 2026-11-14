@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Installs both packages' dependencies.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+# shellcheck source=lib/each.sh
+source bin/lib/each.sh
+run_each setup "$@"
