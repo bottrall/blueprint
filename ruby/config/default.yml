@@ -1,0 +1,32 @@
+# Defaults for the Bottrall/ cops, loaded by RuboCop::Bottrall::Plugin.
+
+Bottrall/NoInheritance:
+  Description: >-
+    Compose instead of inheriting: a superclass is allowed only when it's an
+    error class or a framework-mandated parent listed in AllowedParents.
+  Enabled: true
+  VersionAdded: '0.1'
+  # Framework-mandated parents, as fully qualified constant names
+  # (e.g. `ApplicationRecord`, `RuboCop::Cop::Base`).
+  AllowedParents: []
+
+Bottrall/NoMocking:
+  Description: >-
+    Don't stub, use Minitest::Mock, or patch methods onto code you own:
+    inject a real lightweight fake instead.
+  Enabled: true
+  VersionAdded: '0.1'
+  Include:
+    - '**/test/**/*'
+    - '**/*_test.rb'
+  # Namespaces whose constants (and locals built from them) may not have
+  # methods patched in with define_singleton_method / define_method. With
+  # none listed, only `stub` and `Minitest::Mock` are flagged.
+  OwnedNamespaces: []
+
+Bottrall/RequireDisableReason:
+  Description: >-
+    Every `rubocop:disable` / `rubocop:todo` directive carries a reason
+    after ` -- `.
+  Enabled: true
+  VersionAdded: '0.1'

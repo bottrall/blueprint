@@ -1,0 +1,24 @@
+# The gem lints itself with its own plugin and shared style.
+
+plugins:
+  - rubocop-bottrall:
+      require_path: ./lib/rubocop-bottrall
+      plugin_class_name: RuboCop::Bottrall::Plugin
+
+inherit_from:
+  - config/base.yml
+
+Bottrall/NoInheritance:
+  AllowedParents:
+    - LintRoller::Plugin
+    - RuboCop::Cop::Base
+
+Style/ClassAndModuleChildren:
+  Exclude:
+    # The gemspec loads version.rb before the RuboCop namespace exists.
+    - 'lib/rubocop/bottrall/version.rb'
+
+Naming/FileName:
+  Exclude:
+    # RuboCop requires a plugin's entry file by the gem's name.
+    - 'lib/rubocop-bottrall.rb'

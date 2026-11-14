@@ -1,0 +1,54 @@
+# frozen_string_literal: true
+
+require 'rake/testtask'
+require 'rubocop/rake_task'
+require 'rbconfig'
+require 'tmpdir'
+
+Rake::TestTask.new(:test) do |t|
+  t.libs << 'test' << 'lib'
+  t.test_files = FileList['test/**/*_test.rb']
+  t.warning = false
+end
+
+RuboCop::RakeTask.new(:lint) do |t|
+  # The gem lints with its own .rubocop.yml, never a parent directory's.
+  t.options = ['--ignore-parent-exclusion', *ENV.fetch('RUBOCOP_OPTS', '').split]
+end
+
+desc 'Nothing to set up beyond bundle install'
+task :setup
+
+desc 'Build the gem into pkg/, then install it into an empty GEM_HOME and check it loads'
+task :build do
+  spec = Gem::Specification.load('rubocop-bottrall.gemspec')
+  gem_file = File.join('pkg', spec.file_name)
+  mkdir_p 'pkg'
+  sh 'gem', 'build', 'rubocop-bottrall.gemspec', '--output', gem_file
+
+  mkdir_p 'tmp'
+  Dir.mktmpdir('install', 'tmp') do |dir|
+    gem_home = File.expand_path(dir)
+    # The empty GEM_HOME receives only the built gem; its dependencies resolve
+    # from the bundle's gem path, so --local never reaches the network.
+    env = { 'GEM_HOME' => gem_home, 'GEM_PATH' => [gem_home, *Gem.path].join(File::PATH_SEPARATOR) }
+    check = <<~RUBY
+      require 'rubocop-bottrall'
+      spec = Gem.loaded_specs.fetch('rubocop-bottrall')
+      abort "loaded \#{spec.full_gem_path}, not the built gem" unless spec.full_gem_path.start_with?(ENV['GEM_HOME'])
+      plugin = Object.const_get(spec.metadata.fetch('default_lint_roller_plugin'))
+      rules = plugin.new({}).rules(nil).value
+      abort "missing \#{rules}" unless rules.file?
+      puts "loaded rubocop-bottrall \#{RuboCop::Bottrall::VERSION} from the built gem"
+    RUBY
+    Bundler.with_unbundled_env do
+      sh env, 'gem', 'install', '--local', '--no-document', gem_file
+      sh env, RbConfig.ruby, '-e', check, verbose: false
+    end
+  end
+end
+
+desc 'Run everything CI runs'
+task ci: %i[test lint build]
+
+task default: :ci
