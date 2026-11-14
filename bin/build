@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Builds and verifies both packages.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+source bin/lib/each.sh
+run_each build "$@"

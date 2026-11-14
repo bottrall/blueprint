@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Checks lint and formatting in both packages; --fix fixes what it can.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+source bin/lib/each.sh
+run_each lint "$@"
