@@ -3,6 +3,7 @@
 # template tests and shellcheck. Run it before you push.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+# shellcheck source=lib/each.sh
 source bin/lib/each.sh
 status=0
 run_each ci || status=1
@@ -10,7 +11,7 @@ echo "==> templates"
 run_template_tests || status=1
 if command -v shellcheck >/dev/null; then
   echo "==> shellcheck"
-  shellcheck -x bin/* bin/lib/*.sh templates/shared/bin/* templates/shared/bin/lib/*.sh || status=1
+  find bin templates/shared/bin -type f -print0 | xargs -0 shellcheck -x || status=1
 else
   echo "==> shellcheck not installed; CI runs it"
 fi

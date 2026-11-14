@@ -6,7 +6,7 @@ cd "$(dirname "$0")/.."
 source bin/lib/stack.sh
 
 parse_args no-paths -- "$@"
-select_stacks
+select_stacks "" # no paths, so no router
 
 run_ruby() {
   if [[ ! -f Steepfile ]]; then
