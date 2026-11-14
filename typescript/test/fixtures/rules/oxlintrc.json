@@ -1,0 +1,43 @@
+{
+  "plugins": [],
+  "categories": { "correctness": "off" },
+  "jsPlugins": ["../../../plugin/index.js"],
+  "overrides": [
+    {
+      "files": ["no-default-export/**"],
+      "rules": { "bottrall/no-default-export": "error" }
+    },
+    {
+      "files": ["no-explicit-return-types/**"],
+      "rules": { "bottrall/no-explicit-return-types": "error" }
+    },
+    {
+      "files": ["no-inheritance/**"],
+      "rules": { "bottrall/no-inheritance": "error" }
+    },
+    {
+      "files": ["no-mocking/**"],
+      "rules": { "bottrall/no-mocking": "error" }
+    },
+    {
+      "files": ["no-screaming-case/**"],
+      "rules": { "bottrall/no-screaming-case": "error" }
+    },
+    {
+      "files": ["no-type-casts/**"],
+      "rules": { "bottrall/no-type-casts": "error" }
+    },
+    {
+      "files": ["no-unlintable-classes/**"],
+      "rules": { "bottrall/no-unlintable-classes": "error" }
+    },
+    {
+      "files": ["require-colocated-test/**"],
+      "rules": { "bottrall/require-colocated-test": ["error", { "exempt": ["valid-exempt.ts"] }] }
+    },
+    {
+      "files": ["require-disable-description/**"],
+      "rules": { "bottrall/require-disable-description": "error" }
+    }
+  ]
+}

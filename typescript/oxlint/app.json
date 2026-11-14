@@ -1,0 +1,180 @@
+{
+  "$schema": "../node_modules/oxlint/configuration_schema.json",
+  "extends": ["./base.json"],
+  "plugins": ["react", "typescript", "unicorn"],
+  "jsPlugins": ["../plugin/index.js", "eslint-plugin-better-tailwindcss"],
+  "rules": {
+    "react/jsx-max-depth": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "react",
+            "message": "This is a Preact app — import from preact or preact/hooks."
+          },
+          { "name": "react-dom", "message": "This is a Preact app — import from preact." }
+        ]
+      }
+    ],
+
+    "bottrall/no-unlintable-classes": "error",
+
+    "better-tailwindcss/enforce-consistent-class-order": [
+      "error",
+      {
+        "order": "official",
+        "selectors": [
+          {
+            "kind": "variable",
+            "name": "^\\w*[cC]lass(?:es|Names?)$",
+            "match": [{ "type": "strings" }, { "type": "objectValues" }]
+          }
+        ]
+      }
+    ],
+    "better-tailwindcss/no-concatenated-classes": [
+      "error",
+      {
+        "selectors": [
+          { "kind": "attribute", "name": "^class(?:Name)?$" },
+          { "kind": "attribute", "name": "^class(?:Name)?$", "match": [{ "type": "strings" }] },
+          { "kind": "callee", "name": "^cx$", "match": [{ "type": "strings" }] },
+          { "kind": "callee", "name": "^cx$", "match": [{ "type": "objectKeys" }] },
+          {
+            "kind": "variable",
+            "name": "^\\w*[cC]lass(?:es|Names?)$",
+            "match": [{ "type": "strings" }, { "type": "objectValues" }]
+          }
+        ]
+      }
+    ],
+    "better-tailwindcss/no-conflicting-classes": [
+      "error",
+      {
+        "selectors": [
+          { "kind": "attribute", "name": "^class(?:Name)?$" },
+          { "kind": "attribute", "name": "^class(?:Name)?$", "match": [{ "type": "strings" }] },
+          { "kind": "callee", "name": "^cx$", "match": [{ "type": "strings" }] },
+          { "kind": "callee", "name": "^cx$", "match": [{ "type": "objectKeys" }] },
+          {
+            "kind": "variable",
+            "name": "^\\w*[cC]lass(?:es|Names?)$",
+            "match": [{ "type": "strings" }, { "type": "objectValues" }]
+          }
+        ]
+      }
+    ],
+    "better-tailwindcss/no-deprecated-classes": [
+      "error",
+      {
+        "selectors": [
+          { "kind": "attribute", "name": "^class(?:Name)?$" },
+          { "kind": "attribute", "name": "^class(?:Name)?$", "match": [{ "type": "strings" }] },
+          { "kind": "callee", "name": "^cx$", "match": [{ "type": "strings" }] },
+          { "kind": "callee", "name": "^cx$", "match": [{ "type": "objectKeys" }] },
+          {
+            "kind": "variable",
+            "name": "^\\w*[cC]lass(?:es|Names?)$",
+            "match": [{ "type": "strings" }, { "type": "objectValues" }]
+          }
+        ]
+      }
+    ],
+    "better-tailwindcss/no-duplicate-classes": [
+      "error",
+      {
+        "selectors": [
+          { "kind": "attribute", "name": "^class(?:Name)?$" },
+          { "kind": "attribute", "name": "^class(?:Name)?$", "match": [{ "type": "strings" }] },
+          { "kind": "callee", "name": "^cx$", "match": [{ "type": "strings" }] },
+          { "kind": "callee", "name": "^cx$", "match": [{ "type": "objectKeys" }] },
+          {
+            "kind": "variable",
+            "name": "^\\w*[cC]lass(?:es|Names?)$",
+            "match": [{ "type": "strings" }, { "type": "objectValues" }]
+          }
+        ]
+      }
+    ],
+    "better-tailwindcss/no-unknown-classes": [
+      "error",
+      {
+        "selectors": [
+          { "kind": "attribute", "name": "^class(?:Name)?$" },
+          { "kind": "attribute", "name": "^class(?:Name)?$", "match": [{ "type": "strings" }] },
+          { "kind": "callee", "name": "^cx$", "match": [{ "type": "strings" }] },
+          { "kind": "callee", "name": "^cx$", "match": [{ "type": "objectKeys" }] },
+          {
+            "kind": "variable",
+            "name": "^\\w*[cC]lass(?:es|Names?)$",
+            "match": [{ "type": "strings" }, { "type": "objectValues" }]
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.{ts,tsx}"],
+      "plugins": ["vitest"],
+      "jsPlugins": ["eslint-plugin-testing-library", "eslint-plugin-jest-dom"],
+      "rules": {
+        "jest-dom/prefer-checked": "error",
+        "jest-dom/prefer-empty": "error",
+        "jest-dom/prefer-enabled-disabled": "error",
+        "jest-dom/prefer-focus": "error",
+        "jest-dom/prefer-in-document": "error",
+        "jest-dom/prefer-required": "error",
+        "jest-dom/prefer-to-have-attribute": "error",
+        "jest-dom/prefer-to-have-class": "error",
+        "jest-dom/prefer-to-have-style": "error",
+        "jest-dom/prefer-to-have-text-content": "error",
+        "jest-dom/prefer-to-have-value": "error",
+
+        "bottrall/no-mocking": "error",
+
+        "testing-library/await-async-events": "error",
+        "testing-library/await-async-queries": "error",
+        "testing-library/await-async-utils": "error",
+        "testing-library/no-await-sync-events": "error",
+        "testing-library/no-await-sync-queries": "error",
+        "testing-library/no-container": "error",
+        "testing-library/no-debugging-utils": "error",
+        "testing-library/no-dom-import": ["error", "preact"],
+        "testing-library/no-global-regexp-flag-in-query": "error",
+        "testing-library/no-manual-cleanup": "error",
+        "testing-library/no-node-access": "error",
+        "testing-library/no-promise-in-fire-event": "error",
+        "testing-library/no-render-in-lifecycle": "error",
+        "testing-library/no-unnecessary-act": "error",
+        "testing-library/no-wait-for-multiple-assertions": "error",
+        "testing-library/no-wait-for-side-effects": "error",
+        "testing-library/no-wait-for-snapshot": "error",
+        "testing-library/prefer-find-by": "error",
+        "testing-library/prefer-presence-queries": "error",
+        "testing-library/prefer-query-by-disappearance": "error",
+        "testing-library/prefer-screen-queries": "error",
+        "testing-library/prefer-user-event-setup": "error",
+        "testing-library/render-result-naming-convention": "error",
+
+        "vitest/consistent-test-it": ["error", { "fn": "it", "withinDescribe": "it" }],
+        "vitest/max-expects": ["error", { "max": 1 }],
+        "vitest/no-hooks": "off",
+        "vitest/no-importing-vitest-globals": "off",
+        "vitest/prefer-called-once": "off",
+        "vitest/prefer-expect-assertions": "off",
+        "vitest/prefer-importing-vitest-globals": "off",
+        "vitest/prefer-lowercase-title": "off",
+        "vitest/prefer-to-be-falsy": "off",
+        "vitest/prefer-to-be-truthy": "off",
+        "vitest/require-hook": "error",
+        "vitest/valid-title": ["error", { "ignoreTypeOfDescribeName": true }]
+      }
+    }
+  ]
+}

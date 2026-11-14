@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Fix lint and formatting, then run the tests. Run before treating a change as done.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+bin/lint --fix
+bin/test
