@@ -1,0 +1,4 @@
+# Generated from lib/{{require_path}}.rb with RBS::Inline
+
+module {{module}}
+end

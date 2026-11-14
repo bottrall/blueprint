@@ -1,0 +1,6 @@
+/pkg/
+/tmp/
+/.bundle/
+/.gem_rbs_collection/
+/.claude/worktrees/
+/coverage/

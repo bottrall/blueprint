@@ -1,0 +1,19 @@
+plugins:
+  - rubocop-bottrall
+
+inherit_gem:
+  rubocop-bottrall:
+    - config/base.yml
+    - config/rbs-inline.yml
+
+inherit_mode:
+  merge:
+    - Exclude
+
+AllCops:
+  # The oldest Ruby the gemspec supports.
+  TargetRubyVersion: 3.3
+
+Bottrall/NoMocking:
+  OwnedNamespaces:
+    - {{module}}

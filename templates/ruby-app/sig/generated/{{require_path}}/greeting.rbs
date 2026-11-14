@@ -1,0 +1,9 @@
+# Generated from lib/{{require_path}}/greeting.rb with RBS::Inline
+
+# A sample to replace with the gem's own code: it gives CI a module to lint,
+# type-check and test.
+module {{module}}::Greeting
+  # @rbs name: String?
+  # @rbs return: String
+  def call: (?String? name) -> String
+end
