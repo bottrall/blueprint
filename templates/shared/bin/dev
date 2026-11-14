@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Runs the app locally: every process in mprocs.yaml, else `rake dev`, else the Vite dev server.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+# shellcheck source=lib/stack.sh
+source bin/lib/stack.sh
+
+if (($#)); then fail "takes no arguments"; fi
+
+if has_ts && [[ -f mprocs.yaml ]]; then exec pnpm exec mprocs; fi
+if has_ruby && has_rake_task dev; then exec bundle exec rake dev; fi
+if has_ts && has_vite_config; then exec pnpm exec vite; fi
+
+not_applicable "no mprocs.yaml, rake dev task or vite.config"

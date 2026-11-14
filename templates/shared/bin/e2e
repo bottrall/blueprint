@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Runs the Playwright end-to-end tests against a production build, or only the given specs.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+# shellcheck source=lib/stack.sh
+source bin/lib/stack.sh
+
+CONFIG=e2e/playwright.config.ts
+
+# Playwright's webServer config builds the app and serves it with `vite
+# preview`, so this only starts Playwright. Every argument goes to it, since it
+# is the only runner.
+args=()
+for arg in "$@"; do
+  case $arg in
+    --only=ts) ;;
+    --only=*) fail "end-to-end tests are TS-only; drop $arg" ;;
+    *) args+=("$arg") ;;
+  esac
+done
+
+if ! has_ts || [[ ! -f $CONFIG ]]; then not_applicable "no $CONFIG"; fi
+
+exec pnpm exec playwright test --config "$CONFIG" ${args[@]+"${args[@]}"}
