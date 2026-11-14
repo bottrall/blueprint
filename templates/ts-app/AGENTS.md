@@ -18,7 +18,7 @@
 ## App conventions
 
 - **Preact, not React.** Import from `preact`, `preact/hooks` and `preact-iso`; write `class`, not `className`.
-- **State is signals.** A feature's state lives in `signal`s owned by a plain `.ts` factory that also makes every write to them; `src/main.tsx` builds it, and components read its signals and call its functions. Don't write to a `useSignal` from a component: lint's `react/immutability` rejects writing to a value a hook returned. `useState` is fine for state nothing outside the component reads.
+- **State is signals.** A component's own state is a `useSignal` (or `useComputed`) that it reads and writes through `.value`; there's no `useState`. State a feature shares lives in `signal`s owned by a plain `.ts` factory that also makes every write to them; `src/main.tsx` builds it, and components read its signals and call its functions.
 - **Routes live in `src/app.tsx`** as preact-iso `<Route>`s; links are plain `<a href>`.
 - **Style with Tailwind classes and the theme tokens** (`bg-surface`, `text-ink`, `text-muted`, `bg-accent`, `border-hairline`, `rounded-control`), never raw colours or arbitrary values: add a token to `@theme`, and its dark value, instead. Every page follows the OS light/dark setting. A `class` is a string literal or a `cx()` call so lint can check every class.
 - **Parse what comes from outside** (storage, the network, the URL) with valibot at the boundary, and handle the failure where it's parsed.
