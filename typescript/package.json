@@ -1,6 +1,6 @@
 {
   "name": "@bottrall/oxlint-config",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Shared oxlint configs, custom oxlint rules and tsconfig for bottrall's JavaScript and TypeScript projects.",
   "keywords": [
     "oxlint",
