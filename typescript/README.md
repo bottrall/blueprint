@@ -74,6 +74,7 @@ The three `eslint-plugin-*` packages are optional peer dependencies: `app.json` 
 - `settings` is required for the Tailwind rules: without `entryPoint`, `better-tailwindcss` cannot see your theme and reports `No tailwind css entry point found`. Only `entryPoint` goes here; the class selectors (`class`, `className`, `cx()`, and variables named like `buttonClasses`) are already set in `app.json`'s rule options, so name your class-joining helper `cx`.
 - The `overrides` entry is where the source-only rules live, because only you know where your source is. Add more globs to `files` (for example `"world/**/*.ts"`) or more entries for project-specific rules such as `no-restricted-imports` boundaries. A `require-colocated-test` entry point with no test of its own can be skipped with `["error", { "exempt": ["src/main.tsx"] }]`.
 - The unit-test rules are already scoped to `**/*.test.{ts,tsx}`. Name Playwright specs `*.spec.ts` (Playwright's default) so they stay out of that block.
+- `app.json` turns off `react/immutability`. It reports every write to a value a hook returned, and writing `signal.value` from a `useSignal` is how Preact signals hold state.
 - `app.json` turns away `react` and `react-dom` imports with `no-restricted-imports`. If you set `no-restricted-imports` yourself for some files, your options replace these for those files, so repeat the two `paths` entries.
 
 `.oxfmtrc.json` — oxfmt sorts Tailwind classes in `class`, `className` and `cx()` calls, which is why `app.json` only enforces class order on class-named variables:
