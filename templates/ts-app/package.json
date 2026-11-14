@@ -1,0 +1,36 @@
+{
+  "name": "{{name}}",
+  "private": true,
+  "description": "{{description}}",
+  "type": "module",
+  "dependencies": {
+    "@preact/signals": "^2.11.4",
+    "preact": "^11.2.0",
+    "preact-iso": "^2.12.2",
+    "valibot": "^1.5.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.0",
+    "@bottrall/oxlint-config": "^0.1.0",
+    "@playwright/test": "^1.65.0",
+    "@preact/preset-vite": "^2.10.6",
+    "@tailwindcss/vite": "^4.3.5",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/preact": "^3.2.6",
+    "@testing-library/user-event": "^14.6.9",
+    "@types/node": "^26.6.6",
+    "@vitest/coverage-v8": "^5.1.0",
+    "eslint-plugin-better-tailwindcss": "^4.11.0",
+    "eslint-plugin-jest-dom": "^5.10.2",
+    "eslint-plugin-testing-library": "^7.16.2",
+    "happy-dom": "^21.0.4",
+    "mprocs": "^0.9.6",
+    "oxfmt": "^0.78.0",
+    "oxlint": "^1.93.0",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0",
+    "vitest": "^5.1.0"
+  },
+  "packageManager": "pnpm@12.18.0"
+}
