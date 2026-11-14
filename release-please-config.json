@@ -9,13 +9,15 @@
       "package-name": "rubocop-bottrall",
       "component": "rubocop-bottrall",
       "version-file": "lib/rubocop/bottrall/version.rb",
-      "include-component-in-tag": true
+      "include-component-in-tag": true,
+      "initial-version": "0.1.0"
     },
     "typescript": {
       "release-type": "node",
       "package-name": "@bottrall/oxlint-config",
       "component": "oxlint-config",
-      "include-component-in-tag": true
+      "include-component-in-tag": true,
+      "initial-version": "0.1.0"
     }
   }
 }
