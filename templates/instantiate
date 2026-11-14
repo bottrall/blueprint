@@ -16,9 +16,10 @@ module Instantiate
   SHARED = 'shared'
   PLACEHOLDER = /\{\{(\w+)\}\}/
   INCLUDE = %r{^[ \t]*\{\{>[ \t]*(agents/[\w.-]+\.md)[ \t]*\}\}[ \t]*$}
-  # Anything that still looks like a placeholder or an include once rendering
-  # is done. GitHub Actions expressions, `${{ ... }}`, are the workflows' own.
-  LEFTOVER = /(?<!\$)\{\{[^{}\n]*\}\}/
+  # A placeholder or an include still there once rendering is done. Other
+  # double braces are the files' own: GitHub Actions expressions (`${{ ... }}`)
+  # and JSX object literals (`style={{ color: 'red' }}`).
+  LEFTOVER = /(?<!\$)\{\{(?:\w+|>[^{}\n]*)\}\}/
   # The files whose `bin/` tables list every shared script, one row each.
   BIN_TABLES = %w[CONTRIBUTING.md AGENTS.md].freeze
   DEFAULTS = { 'year' => Time.now.year.to_s }.freeze

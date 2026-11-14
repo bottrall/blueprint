@@ -193,6 +193,12 @@ describe 'templates/instantiate' do
   end
 
   describe 'leftovers' do
+    it 'keeps double braces that are not placeholders, such as a JSX object literal' do
+      _, status = run_stack(*Fixture::VALUES, files: { 'templates/stack/app.tsx' => "<A b={{ c: 1 }} />\n" })
+
+      assert_equal 0, status
+    end
+
     it 'refuses a file holding a placeholder the template does not declare' do
       output, = run_stack(*Fixture::VALUES, files: { 'templates/stack/odd.txt' => '{{colour}}' })
 
