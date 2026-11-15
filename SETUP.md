@@ -6,7 +6,7 @@ How to set up a bottrall project, or bring an existing one in line: the technolo
 
 ### Every repo
 
-- **GitHub**, under `bottrall`, with **GitHub Actions** for CI and releases.
+- **GitHub**, under `bottrall`, with **GitHub Actions** for CI and releases. Third-party Actions are pinned to commit hashes, with the version in a comment, and Renovate keeps them current; `bottrall/deps`'s fix workflow stays on `@main`.
 - **`bin/` scripts** for every task (setup, test, lint, typecheck, build, …). People, CI and agents run the same commands, so a local pass means a CI pass.
 - **Conventional Commits** PR titles, squash-merged, so each title becomes the commit on `main`.
 - **release-please** for anything that publishes: it turns those titles into the version bump and changelog. Publishing uses the registry's **trusted publishing**, so no API key is stored anywhere.
@@ -45,7 +45,7 @@ How to set up a bottrall project, or bring an existing one in line: the technolo
 | [`templates/ruby/`](templates/ruby/)             | Ruby repos       | The CI and release workflows, release-please, and the Bundler, lint and type configs |
 | [`templates/typescript/`](templates/typescript/) | TypeScript repos | The CI workflow, `package.json`, and the lint, format, build and test configs        |
 
-Copy `common/` and the stack's folder into the new repo, then:
+Copy `common/` and the stack's folder into the new repo. A private repo leaves out `CODE_OF_CONDUCT.md` and `SECURITY.md` until it goes public. Then:
 
 - **Fill in the placeholders**, then check none are left (`grep -rn '{{[a-z_]*}}' .`):
   - `{{name}}`: the project's name, e.g. `riffer-rig`;
@@ -206,7 +206,8 @@ Once the first PR's CI has run, require every check CI shows (`gh pr checks <n>`
 A project that publishes releases through release-please and `release.yml`:
 
 - **Release PR.** Every push to `main` updates the release PR.
-- **Publishing.** Merging the release PR tags the release. `release.yml` then checks it in an unprivileged job and publishes from the `release` environment.
+- **Publishing.** Merging the release PR tags the release. `release.yml` then builds it in an unprivileged job and publishes that exact file from the `release` environment. It doesn't re-run CI: the release PR's checks already passed.
+- **Lockfile.** A `lockfile` job runs `bundle lock` on the release PR, since release-please doesn't update the lockfile's checksums.
 - **Trusted publisher.** Before the first release PR is merged, the user adds a pending trusted publisher on the registry it publishes to: repository `bottrall/<name>`, workflow `release.yml`, environment `release`. Ask them to, and wait for confirmation.
 - **Don't rename.** A trusted publisher is tied to the workflow's file name and the environment, so renaming either stops publishing.
 - **CI on release PRs.** GitHub Actions opens the release PRs, which doesn't trigger CI. Close and reopen one to run its checks before merging.
@@ -218,7 +219,7 @@ Report what differs from this file, worst first, and fix it through PRs only whe
 1. **Shared files.** Everything in `templates/common/` matches byte for byte, after placeholders, for the scripts and files the repo uses.
 2. **Stack files.** These follow the stack's starter files in intent, not to the letter:
    - CI runs only `bin/*` scripts;
-   - the release flow has an unprivileged verify job and publishes from `release`;
+   - the release flow builds in an unprivileged job, publishes that file from `release`, and doesn't re-run CI;
    - the Rakefile's task names match;
    - `package.json` has no `scripts`.
 3. **Shared configs.** The repo uses `rubocop-bottrall` or `@bottrall/oxlint-config` at the latest release, with no local copies of their cops or rules.
