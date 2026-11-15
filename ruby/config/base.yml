@@ -47,8 +47,11 @@ Metrics:
 Metrics/BlockNesting:
   Enabled: true
 
+# Bottrall/MultipleAssertions replaces it: this one only looks inside a class
+# whose name ends in `Test`, so it misses specs written with a top-level
+# `describe`.
 Minitest/MultipleAssertions:
-  Max: 1
+  Enabled: false
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact

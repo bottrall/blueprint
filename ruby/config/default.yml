@@ -1,5 +1,16 @@
 # Defaults for the Bottrall/ cops, loaded by RuboCop::Bottrall::Plugin.
 
+Bottrall/MultipleAssertions:
+  Description: >-
+    A test makes at most Max assertions, counting `it`, `test` and `specify`
+    blocks anywhere as well as `def test_*` methods.
+  Enabled: true
+  VersionAdded: '0.2'
+  Max: 1
+  Include:
+    - '**/test/**/*'
+    - '**/*_test.rb'
+
 Bottrall/NoInheritance:
   Description: >-
     Compose instead of inheriting: a superclass is allowed only when it's an

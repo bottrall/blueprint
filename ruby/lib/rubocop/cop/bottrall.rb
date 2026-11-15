@@ -4,6 +4,7 @@
 module RuboCop::Cop::Bottrall
 end
 
+require_relative 'bottrall/multiple_assertions'
 require_relative 'bottrall/no_inheritance'
 require_relative 'bottrall/no_mocking'
 require_relative 'bottrall/require_disable_reason'
