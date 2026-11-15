@@ -16,7 +16,7 @@ How to set up a bottrall project, or bring an existing one in line: the technolo
 
 ### Ruby
 
-- **Ruby**, pinned in `.ruby-version`.
+- **Ruby**, pinned in `.ruby-version` for development. A gem supports and tests every Ruby that hasn't reached end-of-life: the gemspec's `required_ruby_version` and `.rubocop.yml`'s `TargetRubyVersion` name the oldest of them, and CI tests each one plus `head` (allowed to fail). When a Ruby reaches end-of-life, raise the floor and drop it from CI.
 - **Bundler**, with the lockfile committed.
 - **Zeitwerk** for loading. A file's path matches its constant's name, and nothing in `lib/` is `require`d.
 - **Minitest**, with the spec DSL (`describe` / `it`).
