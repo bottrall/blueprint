@@ -1,0 +1,4 @@
+# pnpm holds back any release younger than its minimum release age. bottrall's
+# own packages are exempt, so a fresh release of one can be used straight away.
+minimumReleaseAgeExclude:
+  - "@bottrall/*"
