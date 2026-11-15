@@ -6,7 +6,7 @@
 set -euo pipefail
 
 HERE=$(cd "$(dirname "$0")" && pwd)
-BIN=$(cd "$HERE/../bin" && pwd)
+BIN=$(cd "$HERE/../../templates/common/bin" && pwd)
 WORK=$(mktemp -d "${TMPDIR:-/tmp}/blueprint-bin-test.XXXXXX")
 trap 'rm -rf "$WORK"' EXIT
 FILTER=${1:-}
