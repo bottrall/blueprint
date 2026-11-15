@@ -4,7 +4,8 @@ The shared Ruby style for bottrall projects, as a [RuboCop](https://rubocop.org)
 
 - `config/base.yml`: the shared style (new cops enabled, one-argument-per-line layout, `Metrics` off except `Metrics/BlockNesting`, compact class nesting, `extend_self` modules, one assertion per Minitest test), with [rubocop-minitest](https://github.com/rubocop/rubocop-minitest), [rubocop-performance](https://github.com/rubocop/rubocop-performance) and [rubocop-rake](https://github.com/rubocop/rubocop-rake) as dependencies and plugins.
 - `config/rbs-inline.yml`: lets `Layout/LeadingCommentSpace` and `Layout/LineLength` accept [rbs-inline](https://github.com/soutaro/rbs-inline) annotations.
-- Three cops in the `Bottrall/` department:
+- Four cops in the `Bottrall/` department:
+  - `Bottrall/MultipleAssertions`: a test makes at most `Max` assertions (default 1). It checks `it`, `test` and `specify` blocks wherever they are, as well as `def test_*` methods, so specs written with a top-level `describe` are covered; `Minitest/MultipleAssertions` only looks inside `*Test` classes, so `config/base.yml` turns it off. Only checks test files.
   - `Bottrall/NoInheritance`: compose instead of inheriting. A superclass is allowed only when it's listed in `AllowedParents`, its name ends in `Error`, or it's a core class that is `Exception` or a `StandardError` descendant.
   - `Bottrall/NoMocking`: no `stub`, no `Minitest::Mock`, and (for code under `OwnedNamespaces`) no methods patched in with `define_singleton_method` / `define_method`. Inject a real lightweight fake instead. Only checks test files (`**/test/**/*`, `**/*_test.rb`).
   - `Bottrall/RequireDisableReason`: every `rubocop:disable` / `rubocop:todo` ends with `-- <reason>`.
