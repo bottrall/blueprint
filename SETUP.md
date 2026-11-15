@@ -16,7 +16,7 @@ How to set up a bottrall project, or bring an existing one in line: the technolo
 
 ### Ruby
 
-- The Ruby in `.ruby-version`, currently 4.0.
+- **Ruby**, pinned in `.ruby-version`.
 - **Bundler**, with the lockfile committed.
 - **Zeitwerk** for loading. A file's path matches its constant's name, and nothing in `lib/` is `require`d.
 - **Minitest**, with the spec DSL (`describe` / `it`).
@@ -30,22 +30,22 @@ How to set up a bottrall project, or bring an existing one in line: the technolo
 
 ### TypeScript
 
-- The Node in `.nvmrc`. **pnpm** through corepack, pinned by `packageManager`.
+- **Node**, pinned in `.nvmrc`. **pnpm** through corepack, pinned by `packageManager`.
 - `package.json` has **no `scripts`**: `bin/` is the interface.
 - **TypeScript**, strict. A web app extends `tsconfig/app.json` from [`@bottrall/oxlint-config`](typescript/README.md).
 - **oxlint** and **oxfmt** through `@bottrall/oxlint-config`.
-- **Vitest** with v8 coverage, enforced per file (100% of functions, 75% of statements), and **Testing Library**. Tests sit beside the source as `*.test.ts(x)`.
+- **Vitest** with coverage enforced per file (the thresholds are in [`POLICY.md`](POLICY.md)), and **Testing Library**. Tests sit beside the source as `*.test.ts(x)`.
 - **Playwright** for end-to-end tests, run against the production build.
 - **Vite** for builds and the dev server, and **mprocs** when `bin/dev` runs more than one process.
-- A web app uses **Preact** (not React), **@preact/signals** for state, **preact-iso** for routing, **Tailwind v4** with design tokens in `@theme`, and **valibot** to parse anything from outside.
+- A web app uses **Preact** (not React), **@preact/signals** for state, **preact-iso** for routing, **Tailwind** with design tokens in `@theme`, and **valibot** to parse anything from outside.
 
 ## Starter files
 
-| Folder                                           | For                 | What's in it                                                                                                                                                                                                                                   |
-| ------------------------------------------------ | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`templates/common/`](templates/common/)         | every repo          | `bin/` and `bin/lib/stack.sh`, `.shellcheckrc`, `pr-title.yml`, `deps.yml`, the PR template, `renovate.json`, `LICENSE`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`                                                                |
-| [`templates/ruby/`](templates/ruby/)             | Ruby repos          | `ci.yml`, `release.yml`, the release-please config and manifest, `Gemfile`, `gem.gemspec`, `Rakefile`, `Steepfile`, `rbs_collection.yaml`, `.rubocop.yml`, `Guardfile`, `test/test_helper.rb`, `.ruby-version`, `.gitignore`, `.gitattributes` |
-| [`templates/typescript/`](templates/typescript/) | TypeScript web apps | `ci.yml`, `package.json`, `.nvmrc`, `.oxlintrc.json`, `.oxfmtrc.json`, `tsconfig.json`, `vite.config.ts`, `vitest.config.ts`, `e2e/playwright.config.ts`, `test/setup.ts`, `mprocs.yaml`, `.gitignore`, `.vscode/`                             |
+| Folder                                           | For                 | What's in it                                                                         |
+| ------------------------------------------------ | ------------------- | ------------------------------------------------------------------------------------ |
+| [`templates/common/`](templates/common/)         | every repo          | The `bin/` scripts, the shared workflows, the Renovate config and the repo docs      |
+| [`templates/ruby/`](templates/ruby/)             | Ruby repos          | The CI and release workflows, release-please, and the Bundler, lint and type configs |
+| [`templates/typescript/`](templates/typescript/) | TypeScript web apps | The CI workflow, `package.json`, and the lint, format, build and test configs        |
 
 Copy `common/` and the stack's folder into the new repo, then:
 
@@ -59,28 +59,17 @@ Copy `common/` and the stack's folder into the new repo, then:
   GitHub Actions expressions (`${{ … }}`) aren't placeholders.
 
 - **Rename** `gem.gemspec` to `<name>.gemspec`.
-- **Delete the `bin/` scripts the repo can't use**, and their rows in `CONTRIBUTING.md`:
-  - a Ruby repo has no use for `dev` (unless Rake has a `dev` task), `e2e` or `docs`;
-  - a TypeScript repo has no use for `generate` or `docs`.
+- **Delete the `bin/` scripts that don't apply** to the repo, and their rows in `CONTRIBUTING.md`. Each script's opening comment says what it runs.
 - **Make the scripts executable** (`chmod +x bin/*`).
 
 ### A Ruby app instead of a gem
 
-The Ruby files are written for a gem. An app that isn't published changes them like this:
+The Ruby starter files are written for a gem. An app that isn't published:
 
-- **Delete** `gem.gemspec`, `release.yml`, `release-please-config.json`, `.release-please-manifest.json` and `bin/build`.
-- **`Gemfile`:** replace `gemspec` with `ruby file: '.ruby-version'`, and list the runtime gems, `gem 'zeitwerk', '~> 2.8'` included.
-- **`Rakefile`:** delete the `GEMSPEC` constant and the `build` task.
-- **`ci.yml`:** in the `check` matrix, replace the `build` entry with `test` (`run: bin/test`), and delete the separate `test` job. The app runs on the Ruby in `.ruby-version` alone.
-- **`.rubocop.yml`:** delete `TargetRubyVersion`, since RuboCop reads `.ruby-version`.
-- **`.gitignore`:** delete `/pkg/`.
-- **Entry point:** add `exe/<name>`, which loads the bundle and then `lib/`. Keep it to wiring collaborators together:
-
-  ```ruby
-  ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
-  require 'bundler/setup'
-  require_relative '../lib/<require_path>'
-  ```
+- **Drops the gem-only parts:** the gemspec, the release workflow and release-please files, `bin/build` and the Rakefile's `build` task.
+- **Lists its own gems,** Zeitwerk included, and requires the Ruby in `.ruby-version` instead of loading a gemspec.
+- **Tests on that one Ruby** in CI, rather than a matrix.
+- **Starts from `exe/<name>`,** which loads the bundle, then `lib/`, and only wires collaborators together.
 
 ### Ruby layout
 
@@ -88,10 +77,9 @@ The Ruby files are written for a gem. An app that isn't published changes them l
   - A gem uses `Zeitwerk::Loader.for_gem` and `require_relative`s its `version.rb` first.
   - A gem that extends another gem's namespace (`riffer-rig` → `Riffer::Rig`) defines that namespace, then uses `Zeitwerk::Loader.for_gem_extension(Riffer)`.
   - An app uses `Zeitwerk::Loader.new` with `push_dir(__dir__)`.
-- **Version.** A gem's `lib/<require_path>/version.rb` holds `VERSION = '0.0.0' #: String` inside its module. The gemspec loads it before anything else, so a gem that extends another namespace nests `module Riffer` / `module Rig` there, instead of using compact nesting.
+- **Version.** A gem's version is the `VERSION` constant in `lib/<require_path>/version.rb`, which release-please bumps. The gemspec loads that file before anything else, so a gem that extends another namespace nests its modules there instead of using compact nesting.
 - **Tests.** `test/` mirrors `lib/`, and fixtures go in `test/fixtures/<topic>/`.
 - **Signatures.** Create `sig/generated/`, `sig/manual/` and `sig/_private/`, each with a `.keep` until it has files.
-- **Release-please starting version.** Start a new gem's manifest at `0.0.0`; release-please makes `0.1.0` from the first `feat:`.
 
 ### TypeScript layout (web app)
 
@@ -102,7 +90,7 @@ The Ruby files are written for a gem. An app that isn't published changes them l
 - **`src/lib/`** holds code that knows nothing about the app.
 - **`src/modules/<feature>/`** holds one flat folder per feature, imported from outside only through its `index.ts`.
 - **Imports** carry their `.ts` / `.tsx` extension and use `~/` for `src/`.
-- **Other packages.** A TypeScript package that isn't a web app (an npm package or a VS Code extension) takes `common/`, a `package.json`, `.nvmrc`, and the plain-repo oxlint and oxfmt configs from [`typescript/README.md`](typescript/README.md). It drops the Vite, Playwright and mprocs files, and `bin/build`, `bin/dev` and `bin/e2e`. Releases follow blueprint's own [`release.yml`](.github/workflows/release.yml): release-please, then an unprivileged verify job, then publishing from the `release` environment.
+- **Other packages.** A TypeScript package that isn't a web app (an npm package or a VS Code extension) takes `common/`, a `package.json`, `.nvmrc`, and the plain-repo oxlint and oxfmt configs from [`typescript/README.md`](typescript/README.md). It drops what only an app needs: Vite, Playwright, mprocs and their `bin/` scripts. Releases follow blueprint's own [`release.yml`](.github/workflows/release.yml): release-please, then an unprivileged verify job, then publishing from the `release` environment.
 
 ## AGENTS.md and README.md
 
