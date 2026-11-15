@@ -28,7 +28,7 @@ How to set up a bottrall project, or bring an existing one in line: the technolo
 
 ### TypeScript
 
-- **Node**, pinned in `.nvmrc`. **pnpm** through corepack, pinned by `packageManager`.
+- **Node**, pinned in `.nvmrc`. **pnpm** through corepack, pinned by `packageManager`. `pnpm-workspace.yaml` exempts bottrall's own packages (`@bottrall/*`) from pnpm's minimum release age, so a fresh release of one can be used at once; everything else waits.
 - `package.json` has **no `scripts`**: `bin/` is the interface.
 - **TypeScript**, strict, extending the shared `tsconfig` from [`@bottrall/oxlint-config`](typescript/README.md).
 - **oxlint** and **oxfmt** through `@bottrall/oxlint-config`.
