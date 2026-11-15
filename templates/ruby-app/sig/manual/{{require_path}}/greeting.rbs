@@ -1,4 +1,0 @@
-# rbs-inline drops `extend self`, so the module's methods are declared on it here.
-module {{module}}::Greeting
-  extend {{module}}::Greeting
-end

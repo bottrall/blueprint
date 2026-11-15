@@ -1,5 +1,0 @@
-# Generated from lib/{{require_path}}/version.rb with RBS::Inline
-
-module {{module}}
-  VERSION: String
-end

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Runs both packages' tests, then the template tests.
+# Runs both packages' tests, then the starter bin/ script tests.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 # shellcheck source=lib/each.sh

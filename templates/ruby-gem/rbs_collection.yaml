@@ -1,9 +1,0 @@
-sources:
-  # Pinned so an upstream push can't break typecheck with no gem change.
-  - type: git
-    name: ruby/gem_rbs_collection
-    remote: https://github.com/ruby/gem_rbs_collection.git
-    revision: c69c75ba79d7c19870f8d0e6fa7fe2c1d356e5ae
-    repo_dir: gems
-
-path: .gem_rbs_collection

@@ -85,6 +85,5 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - run: templates/shared/test/run
-      - run: if [[ -x templates/test/run ]]; then templates/test/run; fi
-      - run: find bin tools templates/shared/bin -type f -print0 | xargs -0 shellcheck -x
+      - run: test/bin-scripts/run
+      - run: find bin templates/common/bin -type f -print0 | xargs -0 shellcheck -x

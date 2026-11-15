@@ -11,11 +11,7 @@ run_each() {
   return "$status"
 }
 
-# The tests for templates/: the shared bin/ scripts and, once it exists, the
-# instantiate script.
+# The tests for the starter bin/ scripts in templates/common/bin.
 run_template_tests() {
-  local status=0
-  templates/shared/test/run || status=1
-  if [[ -x templates/test/run ]]; then templates/test/run || status=1; fi
-  return "$status"
+  test/bin-scripts/run
 }
