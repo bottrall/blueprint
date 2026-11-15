@@ -9,7 +9,7 @@ bottrall's project conventions in one place: how code is styled and checked, how
 | [`templates/`](templates/)            | Starter files: the shared `bin/` scripts, CI and release workflows, tool configs, repo docs   | Copied, then edited for the project      |
 | [`agents/`](agents/README.md)         | The AGENTS.md sections every repo shares                                                      | Copied into each repo's AGENTS.md        |
 
-[`SETUP.md`](SETUP.md) explains how to set up a project and check an existing one: technologies, starter files, GitHub settings, deps and releases. Point Claude at this repo and ask. [`POLICY.md`](POLICY.md) says why each rule exists and what enforces it.
+[`SETUP.md`](SETUP.md) explains how to set up a project and check an existing one: technologies, starter files, GitHub settings, deps and releases. Point Claude at this repo and ask.
 
 ## Contributing
 

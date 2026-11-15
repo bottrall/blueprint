@@ -32,7 +32,7 @@ How to set up a bottrall project, or bring an existing one in line: the technolo
 - `package.json` has **no `scripts`**: `bin/` is the interface.
 - **TypeScript**, strict, extending the shared `tsconfig` from [`@bottrall/oxlint-config`](typescript/README.md).
 - **oxlint** and **oxfmt** through `@bottrall/oxlint-config`.
-- **Vitest** with coverage enforced per file (the thresholds are in [`POLICY.md`](POLICY.md)), and **Testing Library**. Tests sit beside the source as `*.test.ts(x)`.
+- **Vitest** with coverage enforced per file (the thresholds are in the starter [`vitest.config.ts`](templates/typescript/vitest.config.ts)), and **Testing Library**. Tests sit beside the source as `*.test.ts(x)`.
 - **Playwright** for end-to-end tests, run against the production build.
 - **Vite** for builds and the dev server, and **mprocs** when `bin/dev` runs more than one process.
 - **Preact** (not React), **@preact/signals** for state, **preact-iso** for routing, **Tailwind** with design tokens in `@theme`, and **valibot** to parse anything from outside.
